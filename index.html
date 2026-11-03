@@ -11,8 +11,8 @@
      새 사진은 이미지 주소(https://...)를 그대로 적어도 돼요.
    --------------------------------------------------------------- */
 const DATA = {
-  /* 잠금화면 비밀번호 */
-  passcode: "0725",
+  /* 잠금화면 비밀번호: 비워두면("") 화면을 누르면 바로 홈 화면 */
+  passcode: "",
 
   /* 배경화면: 비워두면 오렌지 그라데이션 */
   wallpaper: {
@@ -1409,10 +1409,11 @@ function renderLock() {
     </div>` : "";
   // 아이콘 크기 맞춤
   $("#lock-notis").querySelectorAll(".icon").forEach(i => { i.style.width = "38px"; i.style.height = "38px"; i.style.borderRadius = "9px"; });
-  $("#lock").onclick = e => { if (!langReady || e.target.closest("#lang-pick")) return; resetCode(); show("passcode"); };
+  $("#lock").onclick = e => { if (!langReady || e.target.closest("#lang-pick")) return; unlock(); };
 }
 
-/* ---------- 비밀번호 ---------- */
+/* ---------- 비밀번호 (비워두면 바로 홈) ---------- */
+function unlock() { if (!DATA.passcode) return show("home"); resetCode(); show("passcode"); }
 let code = "";
 function renderPasscode() {
   const keys = [["1", ""], ["2", "ABC"], ["3", "DEF"], ["4", "GHI"], ["5", "JKL"], ["6", "MNO"], ["7", "PQRS"], ["8", "TUV"], ["9", "WXYZ"], ["0", ""]];
@@ -2297,7 +2298,7 @@ $("#lb-next").onclick = () => lbMove(1);
 indicator.onclick = () => {
   if ($("#lightbox").classList.contains("open")) $("#lightbox").classList.remove("open");
   if (appEl.classList.contains("active")) return closeApp();
-  if (current === "lock" && langReady) { resetCode(); show("passcode"); }
+  if (current === "lock" && langReady) unlock();
 };
 document.addEventListener("keydown", e => { if (e.key === "Escape") indicator.onclick(); });
 
